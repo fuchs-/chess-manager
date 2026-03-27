@@ -34,7 +34,7 @@ public class GamesController : ControllerBase
     [HttpPost]
     public ActionResult<Game> CreateGame(Game game)
     {
-        game.ID = Games.Max(g => g.ID) + 1;
+        game.ID = Games.Any() ? Games.Max(g => g.ID) + 1 : 1;
         
         Games.Add(game);
         return CreatedAtAction(nameof(GetGame), new { id = game.ID }, game);
@@ -43,7 +43,7 @@ public class GamesController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult<Game> DeleteGame(int id)
     {
-        var game = GetGame(id).Value;
+        var game = Games.FirstOrDefault(g => g.ID == id);
 
         if (game == null)
         {

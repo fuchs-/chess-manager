@@ -42,12 +42,13 @@ public class PlayerController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult<Player> DeletePlayer(int id)
     {
-        var player = GetPlayer(id)?.Value;
+        var player = Players.FirstOrDefault(p => p.ID == id);
 
         if (player == null)
         {
             return NotFound();
         }
+        
         Players.Remove(player);
         return player;
     }
