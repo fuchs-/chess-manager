@@ -9,8 +9,8 @@ public class PlayerController : ControllerBase
 {
     private static readonly List<Player> Players =
     [ 
-        new Player() { ID = 0, Name = "Fuchs", Rating = 1300 },
-        new Player() { ID = 1, Name = "Magnus", Rating = 2850 },
+        new Player() { ID = 1, Name = "Fuchs", Rating = 1300 },
+        new Player() { ID = 2, Name = "Magnus", Rating = 2850 },
     ];
     
     [HttpGet]
@@ -42,7 +42,7 @@ public class PlayerController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult<Player> DeletePlayer(int id)
     {
-        var player = GetPlayer(id).Value;
+        var player = GetPlayer(id)?.Value;
 
         if (player == null)
         {
