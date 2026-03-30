@@ -1,3 +1,5 @@
+// ReSharper disable SuggestVarOrType_SimpleTypes
+
 using ChessManagerAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,49 +9,61 @@ namespace ChessManagerAPI.Controllers;
 [Route("players")]
 public class PlayerController : ControllerBase
 {
-    private static readonly List<Player> Players =
-    [ 
-        new Player() { ID = 1, Name = "Fuchs", Rating = 1300 },
-        new Player() { ID = 2, Name = "Magnus", Rating = 2850 },
+    // TODO: centralize configuration
+    // ReSharper disable once ConvertToConstant.Local
+    private static readonly int StartingRating = 1500;
+    
+    //TODO: move to service
+    // ReSharper disable once InconsistentNaming
+    private static readonly List<Player> _players =
+    [
+        new (id: 1, name: "Fuchs", rating: 1300),
+        new (id: 2, name: "Magnus", rating: 2850),
     ];
     
     [HttpGet]
     public ActionResult<List<Player>> GetPlayers()
     {
-        return Players;
+        return _players;
     }
 
     [HttpGet("{id:int}")]
     public ActionResult<Player> GetPlayer(int id)
     {
-        var model = Players.FirstOrDefault(p => p.ID == id);
+        var player = _players.FirstOrDefault(p => p.ID == id);
         
-        if (model == null)
+        if (player is null)
         {
             return NotFound();
         }
-        return model;
+        return player;
     }
     
     [HttpPost]
     public ActionResult<Player> CreatePlayer(Player player)
     {
-        player.ID = Players.Max(p => p.ID) + 1;
-        Players.Add(player);
+        player.ID = _players.Max(p => p.ID) + 1;
+        
+        if (player.Rating is 0)
+        {
+            player.Rating = StartingRating;
+        }
+        
+        _players.Add(player);
         return CreatedAtAction(nameof(GetPlayer), new { id = player.ID }, player);
     }
 
     [HttpDelete("{id:int}")]
     public ActionResult<Player> DeletePlayer(int id)
     {
-        var player = Players.FirstOrDefault(p => p.ID == id);
+        var player = _players.FirstOrDefault(p => p.ID == id);
 
-        if (player == null)
+        if (player is null)
         {
             return NotFound();
         }
         
-        Players.Remove(player);
+        _players.Remove(player);
         return player;
     }
 }
